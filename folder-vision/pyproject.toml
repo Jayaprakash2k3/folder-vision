@@ -1,12 +1,12 @@
 [project]
 name = "folder-vision"
-version = "0.1.1"
-description = "Simple FastAPI Hello World application that works everywhere"
-readme = "README.md"
+version = "1.0.1"
+description = "CLIP-powered multimodal image search engine with web interface and CLI tools"
+readme = "README_UV.md"
 requires-python = ">=3.9"
 authors = [{name = "Folder Vision Team", email = "team@foldervision.dev"}]
 license = "MIT"
-keywords = ["fastapi", "web", "api", "demo", "cli"]
+keywords = ["clip", "image-search", "multimodal", "ai", "computer-vision", "fastapi", "search-engine", "similarity-search", "image-clustering"]
 dependencies = [
   "fastapi>=0.100.0,<1.0.0",
   "uvicorn[standard]>=0.25.0,<1.0.0",
@@ -21,17 +21,22 @@ dependencies = [
   "plotly>=5.0.0"
 ]
 classifiers = [
-  "Development Status :: 4 - Beta",
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
-  "Framework :: FastAPI",
-  "Intended Audience :: Developers",
-  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Image Processing",
+  "Topic :: Multimedia :: Graphics",
   "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
-  "Topic :: Software Development :: Libraries :: Application Frameworks"
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+  "Framework :: FastAPI"
 ]
 
 [project.urls]
@@ -57,6 +62,9 @@ package-dir = {"" = "."}
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["folder_vision*"]
+
+[tool.setuptools.package-data]
+folder_vision = ["html/*", "static/*/*", "static/*"]
 
 [build-system]
 requires = ["setuptools>=64", "wheel", "build"]

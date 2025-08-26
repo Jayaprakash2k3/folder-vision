@@ -1,56 +1,172 @@
-# folder-vision
+# Folder Vision - CLIP Image Search 🔍
 
-Simple FastAPI Hello World application that works everywhere.
+> Multimodal image search engine powered by OpenAI's CLIP model
 
-## Quick Install & Run
+Folder Vision enables you to search through your image collections using natural language descriptions or visual similarity. Simply point it at a folder, and it automatically indexes your images for instant semantic search.
 
-### Option 1: pipx (Recommended)
+## ✨ Features
+
+- **🔍 Text-to-Image Search**: Find images using natural language descriptions
+- **🖼️ Image-to-Image Search**: Find visually similar images  
+- **🌐 Web Interface**: Beautiful, responsive web UI for browsing and searching
+- **⚡ Auto-Indexing**: Automatically indexes images from your current directory
+- **🧠 AI-Powered**: Uses OpenAI's CLIP model for semantic understanding
+- **📊 Image Clustering**: Automatically group similar images together
+- **🖥️ Cross-Platform**: Works on Windows, macOS, and Linux
+- **📱 Gallery View**: Browse your entire image collection with pagination
+- **🎯 Similarity Search**: Find images similar to any selected image
+
+## 🚀 Quick Start
+
+### Install with uv (Recommended)
+
+```bash
+# Install uv if you don't have it
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install folder-vision
+uv tool install folder-vision
+
+# Navigate to a folder with images and start the server
+cd /path/to/your/images
+folder-vision serve
+```
+
+### Install with pip
+
+```bash
+pip install folder-vision
+
+# Navigate to a folder with images and start the server  
+cd /path/to/your/images
+folder-vision serve
+```
+
+### Install with pipx
+
+```bash
+pipx install folder-vision
+cd /path/to/your/images
+folder-vision serve
+```
+
+## 📖 Usage
+
+### Web Interface
+
+1. **Start the server** in a directory containing images:
+
+   ```bash
+   cd ~/Pictures  # or any folder with images
+   folder-vision serve
+   ```
+
+2. **Open your browser** to `http://localhost:8000`
+
+3. **Search your images**:
+   - Type natural language queries like "sunset over mountains" or "cat sleeping"
+   - Upload an image to find visually similar ones
+   - Browse the gallery view to see all indexed images
+   - Explore automatic image clusters
+
+### Command Line Interface
+
+```bash
+# Start web server (auto-indexes current directory)
+folder-vision serve --port 8000
+
+# Index a specific folder
+folder-vision index /path/to/images
+
+# Search by text
+folder-vision search-text "red sports car"
+
+# Search by image  
+folder-vision search-image /path/to/query.jpg
+
+# Get statistics
+folder-vision stats
+
+# Cluster images automatically
+folder-vision cluster --method auto
+```
+
+## 🔧 Advanced Usage
+
+### Custom Host and Port
+
+```bash
+folder-vision serve --host 0.0.0.0 --port 3000
+```
+
+### Development Mode
+
+```bash
+folder-vision serve --reload
+```
+
+### Indexing Options
+
+```bash
+# Index without saving cache
+folder-vision index /path/to/images --no-cache
+
+# Limit search depth
+folder-vision index /path/to/images --max-depth 1
+```
+
+## 🛠️ Installation Options
+
+## 🛠️ Installation Methods
+
+### Option 1: uv (Recommended)
+
+```bash
+# Install uv if you don't have it
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install folder-vision
+uv tool install folder-vision
+folder-vision serve
+```
+
+### Option 2: pipx (Isolated Installation)
 
 ```bash
 # Install pipx if you don't have it
 python3 -m pip install --user pipx
 python3 -m pipx ensurepath
-# Restart your terminal, then:
+
+# Install folder-vision
 pipx install folder-vision
-folder-vision
+folder-vision serve
 ```
 
-### Option 2: pip + PATH fix
+### Option 3: pip + PATH fix
 
 ```bash
 pip install folder-vision
+
 # If you get "command not found", add Python scripts to PATH:
 export PATH="$(python3 -m site --user-base)/bin:$PATH"
-folder-vision
+folder-vision serve
 ```
 
-### Option 3: Direct module execution
+### Option 4: Direct module execution
 
 ```bash
 pip install folder-vision
-python3 -m folder_vision
+python3 -m folder_vision serve
 ```
 
-Visit <http://127.0.0.1:8000/> after any method above.
-
-## CLI Options
-
-```bash
-folder-vision --help
-folder-vision --port 9000 --reload
-folder-vision --version
-# Short alias also available:
-fv --port 3000
-```
-
-## Cross-Platform Installation Guide
+## 🖥️ Platform-Specific Installation
 
 ### macOS
 
 ```bash
 # Using Homebrew Python (recommended)
-brew install python
-pipx install folder-vision
+brew install python uv
+uv tool install folder-vision
 
 # Using system Python  
 python3 -m pip install --user folder-vision
@@ -60,41 +176,86 @@ export PATH="$HOME/Library/Python/$(python3 -c 'import sys; print(f"{sys.version
 ### Linux (Ubuntu/Debian)
 
 ```bash
-# Install Python and pip
-sudo apt update && sudo apt install python3 python3-pip
-python3 -m pip install --user folder-vision
-export PATH="$HOME/.local/bin:$PATH"
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+# Install Python and uv
+sudo apt update && sudo apt install python3 python3-pip curl
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source ~/.bashrc
+
+# Install folder-vision
+uv tool install folder-vision
 ```
 
 ### Windows
 
 ```powershell
-# Using Python from python.org or Microsoft Store
+# Install uv
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Install folder-vision
+uv tool install folder-vision
+
+# Or use pip
 pip install folder-vision
-# If command not found, add to PATH:
-# %APPDATA%\Python\Python311\Scripts (adjust Python version)
-
-# Or use module execution:
-python -m folder_vision
 ```
 
-### Windows (PowerShell one-liner)
+## ⚙️ System Requirements
 
-```powershell
-pip install folder-vision; python -m folder_vision
+- **Python**: 3.9 or higher
+- **Memory**: 4GB RAM minimum, 8GB+ recommended for large collections
+- **Storage**: Additional space for embedding cache files
+- **GPU**: Optional but recommended for faster processing (CUDA-compatible)
+
+## 🔍 Example Use Cases
+
+### Personal Photo Management
+
+```bash
+# Index your photo library
+cd ~/Pictures
+folder-vision serve
+
+# Find vacation photos
+folder-vision search-text "beach vacation sunset"
+
+# Find similar photos to a favorite shot
+folder-vision search-image ~/Pictures/favorite_sunset.jpg
 ```
 
-## Troubleshooting
+### Digital Asset Management
 
-### "Command not found" after pip install
+```bash
+# Index product images
+cd /company/product_photos
+folder-vision serve
 
-**Problem**: The `folder-vision` script isn't on your PATH.
+# Find specific product types
+folder-vision search-text "red athletic shoes"
+folder-vision search-text "office furniture desk"
+```
+
+### Creative Workflows
+
+```bash
+# Index design assets
+cd /projects/design_assets
+folder-vision serve
+
+# Find inspiration
+folder-vision search-text "minimalist logo design"
+folder-vision search-text "modern interior architecture"
+```
+
+## 🛠️ Troubleshooting
+
+### "Command not found" after installation
+
+**Problem**: The `folder-vision` command isn't on your PATH.
 
 **Solutions**:
 
-1. **Use pipx** (isolates CLI tools): `pipx install folder-vision`
-2. **Add scripts dir to PATH**:
+1. **Use uv** (recommended): `uv tool install folder-vision`
+2. **Use pipx**: `pipx install folder-vision`
+3. **Add scripts dir to PATH**:
 
    ```bash
    # Find your scripts directory
@@ -102,145 +263,92 @@ pip install folder-vision; python -m folder_vision
    # Add that directory to your PATH
    ```
 
-3. **Run via module**: `python3 -m folder_vision`
+4. **Run via module**: `python3 -m folder_vision serve`
 
-### Virtual Environment Issues
+### Memory Issues
 
-If installing in a venv and the command isn't found:
+If you encounter memory errors with large image collections:
+
+- Reduce batch size by processing smaller folders
+- Close other applications to free up RAM
+- Use a machine with more memory for very large collections
+
+### Slow Indexing
+
+To improve indexing performance:
+
+- Use SSD storage for better I/O performance
+- Enable GPU acceleration if available
+- Process images in smaller batches
+
+### No Images Found
+
+Make sure you're running the command from a directory that contains images:
 
 ```bash
-source .venv/bin/activate  # or .venv\Scripts\activate on Windows
-pip install folder-vision
-folder-vision  # should work now
+cd /path/to/folder/with/images
+folder-vision serve
 ```
 
-### Permission Errors
+Supported formats: JPG, JPEG, PNG, GIF, BMP, TIFF
 
-On Linux/macOS, use `--user` flag:
-
-```bash
-python3 -m pip install --user folder-vision
-```
-
-### Python Version Conflicts
-
-Ensure Python 3.9+:
+## 🔧 Development Setup
 
 ```bash
-python3 --version
-# If older, install newer Python or use pyenv/conda
-```
-
-## Development Setup
-
-```bash
+# Clone the repository
 git clone https://github.com/folder-vision/folder-vision
 cd folder-vision
+
+# Create virtual environment
 python3 -m venv .venv
-source .venv/bin/activate  # .venv\Scripts\activate on Windows
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# Install in development mode
 pip install -e .[dev]
+
+# Run tests
 pytest
+
+# Start development server
+folder-vision serve --reload
 ```
 
-## Easy Install Scripts
+## 📦 Building and Publishing
 
-For convenience, we provide installer scripts:
-
-### Unix/Linux/macOS
+### Build the Package
 
 ```bash
-# Download and run the installer
-curl -L https://github.com/folder-vision/folder-vision/raw/main/install.sh | bash
-# Or download the repo and run:
-./install.sh
-```
+# Install build tools
+pip install build
 
-### Windows Install Script
-
-```powershell
-# Download install.bat and run it, or:
-.\install.bat
-```
-
-### PATH Setup Helper
-
-If you get "command not found" after installing:
-
-```bash
-python setup_path.py
-```
-
-This script automatically configures your shell to find the `folder-vision` command.
-
-## Distributable Zip
-
-To create a zip you can share:
-
-```bash
-zip -r folder-vision.zip folder_vision requirements.txt README.md
-```
-
-Recipient would unzip, create venv, install requirements, and run uvicorn as above.
-
-### Prebuilt Zip With Virtualenv (No Pip Needed On Client)
-
-Build (on your machine):
-
-```bash
-make dist-zip
-```
-
-This produces `dist/folder-vision.zip` containing a `.venv` directory with dependencies pre-installed. On the target machine (same OS/architecture):
-
-```bash
-unzip folder-vision.zip
-cd folder-vision
-source .venv/bin/activate
-python -m folder_vision  # or: uvicorn folder_vision.app:app
-```
-
-Note: Virtualenvs are not portable across OS types (Linux vs macOS vs Windows) and sometimes not across differing minor Python versions / architectures (arm64 vs x86_64). Use this when environments are similar.
-
-## Packaging as Executable (Optional)
-
-You can use `pip install pipx` then `pipx run pyinstaller` or just install pyinstaller inside venv:
-
-```bash
-pip install pyinstaller
-pyinstaller -F -n folder-vision run.py
-```
-
-Executable will be in `dist/`.
-
-On another machine (same OS + architecture):
-
-```bash
-./dist/folder-vision
-```
-
-If you need cross-platform binaries, repeat the build on each target platform.
-
-## Publishing to PyPI
-
-1. Update version in `pyproject.toml`.
-2. Build artifacts:
-
-```bash
+# Build the package
 python -m build
 ```
 
-1. (First time) install twine: `pip install twine`.
-1. Upload:
+### Publish to PyPI
 
 ```bash
+# Install twine
+pip install twine
+
+# Upload to PyPI
 twine upload dist/*
 ```
 
-1. Test install:
+## 📄 License
 
-```bash
-pip install --no-cache-dir folder-vision==<version>
-folder-vision
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-For a private/internal distribution you can instead host a simple index (e.g. via an S3 static site) and use `pip install --index-url <url> folder-vision`.
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 🔗 Links
+
+- **Homepage**: [https://github.com/folder-vision/folder-vision](https://github.com/folder-vision/folder-vision)
+- **Documentation**: [README_CLIP.md](README_CLIP.md)
+- **Issues**: [https://github.com/folder-vision/folder-vision/issues](https://github.com/folder-vision/folder-vision/issues)
+
+---
+
+Made with ❤️ by the Folder Vision Team

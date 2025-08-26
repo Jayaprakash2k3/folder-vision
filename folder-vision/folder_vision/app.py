@@ -2,6 +2,7 @@ import os
 import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional
+import pkg_resources
 
 import torch
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query
@@ -28,13 +29,34 @@ indexed_folder: Optional[str] = None
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 
-# Mount static files if they exist
-if Path("static").exists():
-    app.mount("/static", StaticFiles(directory="static"), name="static")
+# Get package directory for static files
+try:
+    package_dir = Path(pkg_resources.resource_filename('folder_vision', ''))
+    static_dir = package_dir / "static"
+    html_dir = package_dir / "html"
+except:
+    # Fallback to current directory structure for development
+    package_dir = Path(__file__).parent
+    static_dir = package_dir / "static"
+    html_dir = package_dir / "html"
+    
+    # If not found in package, try parent directory (development mode)
+    if not static_dir.exists():
+        static_dir = package_dir.parent / "static"
+    if not html_dir.exists():
+        html_dir = package_dir.parent / "html"
 
-# Mount html files if they exist
-if Path("html").exists():
-    app.mount("/html", StaticFiles(directory="html"), name="html")
+# Mount static files if they exist
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+# Also check for legacy locations
+legacy_static = Path("static")
+legacy_html = Path("html")
+if legacy_static.exists() and not static_dir.exists():
+    app.mount("/static", StaticFiles(directory="static"), name="static")
+if not html_dir.exists() and legacy_html.exists():
+    html_dir = legacy_html
 
 
 @app.on_event("startup")
@@ -49,20 +71,17 @@ async def startup_event():
         if search_engine.load_embeddings_cache():
             logger.info("Loaded existing embeddings cache")
         
-        # Auto-index the test_images directory with max depth of 2
-        test_images_dir = os.path.join(os.getcwd(), "..", "test_images")
-        if os.path.exists(test_images_dir):
-            logger.info(f"Auto-indexing test images directory: {test_images_dir}")
-            
-            try:
-                result = search_engine.index_folder(test_images_dir, max_depth=2)
-                indexed_folder = test_images_dir
-                logger.info(f"Auto-indexing complete: {result['successfully_indexed']} images indexed")
-            except Exception as e:
-                logger.warning(f"Auto-indexing failed: {e}")
-                # Continue without auto-indexing if it fails
-        else:
-            logger.info(f"Test images directory not found at: {test_images_dir}")
+        # Auto-index the current working directory with max depth of 2
+        current_dir = os.getcwd()
+        logger.info(f"Auto-indexing current directory: {current_dir}")
+        
+        try:
+            result = search_engine.index_folder(current_dir, max_depth=2)
+            indexed_folder = current_dir
+            logger.info(f"Auto-indexing complete: {result['successfully_indexed']} images indexed")
+        except Exception as e:
+            logger.warning(f"Auto-indexing failed: {e}")
+            # Continue without auto-indexing if it fails
             
     except Exception as e:
         logger.error(f"Failed to initialize CLIP search engine: {e}")
@@ -72,7 +91,7 @@ async def startup_event():
 @app.get("/", response_class=HTMLResponse)
 async def root():
     """Serve the home page."""
-    html_file = Path("html/home.html")
+    html_file = html_dir / "home.html"
     if html_file.exists():
         return FileResponse(html_file)
     else:
@@ -90,7 +109,7 @@ async def root():
 @app.get("/gallery", response_class=HTMLResponse)
 async def gallery():
     """Serve the gallery page."""
-    html_file = Path("html/gallery.html")
+    html_file = html_dir / "gallery.html"
     if html_file.exists():
         return FileResponse(html_file)
     else:
@@ -107,7 +126,7 @@ async def gallery():
 @app.get("/search", response_class=HTMLResponse)
 async def search_page():
     """Serve the search results page."""
-    html_file = Path("html/results.html")
+    html_file = html_dir / "results.html"
     if html_file.exists():
         return FileResponse(html_file)
     else:
@@ -124,7 +143,7 @@ async def search_page():
 @app.get("/cluster", response_class=HTMLResponse)
 async def cluster_page():
     """Serve the cluster page."""
-    html_file = Path("html/cluster.html")
+    html_file = html_dir / "cluster.html"
     if html_file.exists():
         return FileResponse(html_file)
     else:
